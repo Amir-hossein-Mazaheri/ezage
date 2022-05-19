@@ -1,9 +1,18 @@
 import { createContext } from "react";
 import { ActionCreator, Dispatch, Reducer } from "Store";
 
+interface ResultItem {
+  id: string;
+  alt_description: string;
+  urls: { small: string };
+  description: string;
+  likes: number;
+}
+
 export interface SearchSlice {
-  results: unknown[];
+  results: ResultItem[];
   count: number;
+  isSearching: boolean;
 }
 
 export interface SearchContext {
@@ -20,11 +29,21 @@ const SearchContext = createContext<SearchContext>({
 enum SearchActions {
   APPLY_RESULTS,
   ADD_TO_RESULTS,
+  SET_SEARCHING_STATUS,
 }
 
 // Action Creators
-export const applyResults: ActionCreator<SearchSlice> = (payload) => ({
+export const applyResults: ActionCreator<Omit<SearchSlice, "isSearching">> = (
+  payload
+) => ({
   type: SearchActions.APPLY_RESULTS,
+  payload,
+});
+
+export const setSearchingStatus: ActionCreator<{ status: boolean }> = (
+  payload
+) => ({
+  type: SearchActions.SET_SEARCHING_STATUS,
   payload,
 });
 
@@ -57,7 +76,23 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
       }
       const results = (action.payload as { results: unknown[] }).results;
       const combinedResults = [...store.results, ...results];
-      return { results: combinedResults, count: combinedResults.length };
+      return {
+        ...store,
+        results: combinedResults,
+        count: combinedResults.length,
+      };
+    }
+
+    case SearchActions.SET_SEARCHING_STATUS: {
+      if (!("payload" in action)) {
+        console.assert("payload didn't provided!");
+        return store;
+      }
+      const { status } = action.payload as { status: boolean };
+      return {
+        ...store,
+        isSearching: status,
+      };
     }
 
     default:
