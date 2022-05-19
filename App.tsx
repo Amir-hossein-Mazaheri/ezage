@@ -12,7 +12,7 @@ const prod = new ProductionConfig();
 
 prod.clearLogs();
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <StoreProvider>
       <NavigationContainer>
