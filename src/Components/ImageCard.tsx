@@ -1,5 +1,8 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+
+import { Entypo } from "@expo/vector-icons";
+import { EvilIcons } from "@expo/vector-icons";
 
 interface ImageCardProps {
   id: string | number;
@@ -21,7 +24,21 @@ const ImageCard: React.FC<ImageCardProps> = ({
       <Image style={styles.image} source={{ uri: url }} />
       <View style={styles.details}>
         <Text style={styles.imageTitle}>{title}</Text>
-        <Text style={styles.imageDescription}>{description}</Text>
+        {description && (
+          <Text style={styles.imageDescription}>{description}</Text>
+        )}
+
+        <View style={styles.bottomBody}>
+          <View style={styles.likes}>
+            <EvilIcons name="heart" size={24} color="black" />
+            <Text style={{ marginLeft: 5 }}>{likes} Likes</Text>
+          </View>
+
+          <TouchableOpacity style={styles.detailsButton}>
+            <Entypo name="list" size={18} color="white" />
+            <Text style={styles.detailsButtonText}>Go to Details</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -46,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     marginBottom: 6,
+    textTransform: "capitalize",
   },
   imageDescription: {
     marginBottom: 8,
@@ -53,6 +71,32 @@ const styles = StyleSheet.create({
   image: {
     maxWidth: "100%",
     height: 165,
+    marginBottom: 8,
+  },
+  bottomBody: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  detailsButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    backgroundColor: "#3498db",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  detailsButtonText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  likes: {
+    flexDirection: "row",
+    alignSelf: "flex-end",
     marginBottom: 8,
   },
 });
