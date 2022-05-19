@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { SafeAreaView } from "react-native";
 
 import QuickAccess from "../Common/QuickAccess";
@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <Container>
       <SafeAreaView>
-        <>{children}</>
+        <Fragment>{children}</Fragment>
       </SafeAreaView>
       <QuickAccess />
     </Container>
