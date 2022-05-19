@@ -17,6 +17,7 @@ const imageState: ImageSlice = {
 const searchState: SearchSlice = {
   results: [],
   count: -1,
+  isSearching: false,
 };
 
 const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
