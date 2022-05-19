@@ -10,9 +10,12 @@ import { View, TextInput, Text, StyleSheet } from "react-native";
 import { debounce } from "lodash";
 import { Feather } from "@expo/vector-icons";
 import unsplashSearch from "../Api/unsplashSearch";
-import SearchContext, { applyResults } from "../Context/SearchContext";
+import SearchContext, {
+  applyResults,
+  setSearchingStatus,
+} from "../Context/SearchContext";
 
-const SearchBar = () => {
+const SearchBar: React.FC = () => {
   const [query, setQuery] = useState("");
   const {
     searchSlice: { count },
@@ -20,12 +23,13 @@ const SearchBar = () => {
   } = useContext(SearchContext);
 
   const doSearch = useCallback(async () => {
-    console.log("ran...");
+    dispatch(setSearchingStatus({ status: true }));
     try {
       const { data } = await unsplashSearch.get("/", {
         params: { query },
       });
 
+      dispatch(setSearchingStatus({ status: false }));
       dispatch(applyResults({ results: data.results, count: data.total }));
     } catch (err) {
       console.log(err, "\n");
@@ -70,7 +74,8 @@ const SearchBar = () => {
 const styles = StyleSheet.create({
   searchBar: {
     marginHorizontal: 15,
-    marginVertical: 12,
+    marginTop: 12,
+    marginBottom: 5,
   },
   safeView: {
     flexDirection: "row",
