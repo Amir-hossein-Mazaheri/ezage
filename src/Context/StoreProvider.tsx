@@ -19,6 +19,7 @@ const searchState: SearchSlice = {
   results: [],
   page: 1,
   count: -1,
+  isOnInit: true,
   isSearching: false,
   isSearchingForNextPage: false,
 };

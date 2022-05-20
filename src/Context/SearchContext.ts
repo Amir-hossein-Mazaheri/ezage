@@ -14,6 +14,7 @@ export interface SearchSlice {
   results: ResultItem[];
   count: number;
   page: number;
+  isOnInit: boolean;
   isSearching: boolean;
   isSearchingForNextPage: boolean;
 }
@@ -33,6 +34,7 @@ enum SearchActions {
   SET_QUERY,
   APPLY_RESULTS,
   ADD_TO_RESULTS,
+  TOGGLE_ON_INIT,
   SET_SEARCHING_STATUS,
   SET_NEXT_PAGE_SEARCH_STATUS,
   INCREMENT_LIKE,
@@ -78,6 +80,10 @@ export const incrementLike: ActionCreator<{ id: string }> = (payload) => ({
 
 export const incrementPage: SimpleActionCreator = () => ({
   type: SearchActions.INCREMENT_PAGE,
+});
+
+export const toggleOnInit: SimpleActionCreator = () => ({
+  type: SearchActions.TOGGLE_ON_INIT,
 });
 
 export const searchReducer: Reducer<SearchSlice> = (store, action) => {
@@ -171,6 +177,10 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
       }
 
       return { ...store, query: (action.payload as { query: string }).query };
+    }
+
+    case SearchActions.TOGGLE_ON_INIT: {
+      return { ...store, isOnInit: !store.isOnInit };
     }
 
     default:
