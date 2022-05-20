@@ -31,6 +31,7 @@ enum SearchActions {
   APPLY_RESULTS,
   ADD_TO_RESULTS,
   SET_SEARCHING_STATUS,
+  INCREMENT_LIKE,
 }
 
 // Action Creators
@@ -45,6 +46,11 @@ export const setSearchingStatus: ActionCreator<{ status: boolean }> = (
   payload
 ) => ({
   type: SearchActions.SET_SEARCHING_STATUS,
+  payload,
+});
+
+export const incrementLike: ActionCreator<{ id: string }> = (payload) => ({
+  type: SearchActions.INCREMENT_LIKE,
   payload,
 });
 
@@ -94,6 +100,22 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
         ...store,
         isSearching: status,
       };
+    }
+
+    case SearchActions.INCREMENT_LIKE: {
+      if (!("payload" in action)) {
+        console.assert("payload didn't provided!");
+        return store;
+      }
+
+      const { id } = action.payload as { id: string };
+      const cStore = { ...store };
+      const wantedImageIndex = cStore.results.findIndex(
+        (item) => item.id === id
+      );
+      const wantedImage = cStore.results[wantedImageIndex];
+      wantedImage.likes++;
+      return cStore;
     }
 
     default:

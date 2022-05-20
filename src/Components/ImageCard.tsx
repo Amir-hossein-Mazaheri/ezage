@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   View,
   Text,
@@ -10,16 +10,17 @@ import {
 
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import SearchContext, { incrementLike } from "../Context/SearchContext";
 
 interface ImageCardProps {
-  id: string | number;
+  id: string;
   title: string;
   url: string;
   description: string;
   likes: number;
 }
 
-let lastTap = null;
+// max delay between taps to register as double tap
 const DOUBLE_PRESS_DELAY = 300;
 
 const ImageCard: React.FC<ImageCardProps> = ({
@@ -29,19 +30,22 @@ const ImageCard: React.FC<ImageCardProps> = ({
   description,
   likes,
 }) => {
-  const increaseLike = useCallback(() => {
-    console.log("Increased Like!! \n");
-  }, []);
+  const [pressed, setPressed] = useState(false);
+  const [lastTap, setLastTap] = useState<number>(null);
+  const { dispatch } = useContext(SearchContext);
 
   const triggerDoubleTap = useCallback(() => {
+    if (pressed) return;
     const now = Date.now();
     if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      increaseLike();
+      // Increment likes locally
+      dispatch(incrementLike({ id }));
+      setPressed(true);
       return;
     }
 
-    lastTap = now;
-  }, [increaseLike]);
+    setLastTap(now);
+  }, [dispatch, id, lastTap, pressed]);
 
   return (
     <Pressable onPress={triggerDoubleTap}>
