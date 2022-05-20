@@ -41,7 +41,8 @@ const SearchResults: React.FC = () => {
         data={results}
         keyExtractor={(item) => (item as { id: string }).id}
         onEndReached={getNextPage}
-        ListFooterComponent={isSearchingForNextPage && <Text>Loading...</Text>}
+        ListFooterComponent={isSearchingForNextPage && <Loading />}
+        // ListFooterComponent={isSearchingForNextPage && <Text>Loading...</Text>}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <ImageCard
