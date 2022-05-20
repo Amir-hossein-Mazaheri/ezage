@@ -34,6 +34,7 @@ enum SearchActions {
   APPLY_RESULTS,
   ADD_TO_RESULTS,
   SET_SEARCHING_STATUS,
+  SET_NEXT_PAGE_SEARCH_STATUS,
   INCREMENT_LIKE,
   INCREMENT_PAGE,
 }
@@ -60,6 +61,13 @@ export const setSearchingStatus: ActionCreator<{ status: boolean }> = (
   payload
 ) => ({
   type: SearchActions.SET_SEARCHING_STATUS,
+  payload,
+});
+
+export const setNextPageSearchingStatus: ActionCreator<{ status: boolean }> = (
+  payload
+) => ({
+  type: SearchActions.SET_NEXT_PAGE_SEARCH_STATUS,
   payload,
 });
 
@@ -120,6 +128,18 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
       return {
         ...store,
         isSearching: status,
+      };
+    }
+
+    case SearchActions.SET_NEXT_PAGE_SEARCH_STATUS: {
+      if (!("payload" in action)) {
+        console.assert("payload didn't provided!");
+        return store;
+      }
+      const { status } = action.payload as { status: boolean };
+      return {
+        ...store,
+        isSearchingForNextPage: status,
       };
     }
 
