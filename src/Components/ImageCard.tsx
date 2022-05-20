@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ interface ImageCardProps {
   likes: number;
 }
 
-// max delay between taps to register as double tap
+// max delay between taps to register as a double tap
 const DOUBLE_PRESS_DELAY = 300;
 
 const ImageCard: React.FC<ImageCardProps> = ({
@@ -30,21 +30,21 @@ const ImageCard: React.FC<ImageCardProps> = ({
   description,
   likes,
 }) => {
-  const [pressed, setPressed] = useState(false);
-  const [lastTap, setLastTap] = useState<number>(null);
+  const pressed = useRef(false);
+  const lastTap = useRef<number>(null);
   const { dispatch } = useContext(SearchContext);
 
   const triggerDoubleTap = useCallback(() => {
-    if (pressed) return;
+    if (pressed.current) return;
     const now = Date.now();
-    if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
+    if (lastTap && now - lastTap.current < DOUBLE_PRESS_DELAY) {
       // Increment likes locally
       dispatch(incrementLike({ id }));
-      setPressed(true);
+      pressed.current = true;
       return;
     }
 
-    setLastTap(now);
+    lastTap.current = now;
   }, [dispatch, id, lastTap, pressed]);
 
   return (
@@ -52,7 +52,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
       <View style={styles.imageCard}>
         <Image style={styles.image} source={{ uri: url }} />
         <View style={styles.details}>
-          <Text style={styles.imageTitle}>{title}</Text>
+          <Text style={styles.imageTitle}>{title ? title : "NO TITLE"}</Text>
           {description && (
             <Text style={styles.imageDescription}>{description}</Text>
           )}
