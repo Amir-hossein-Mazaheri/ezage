@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { ActionCreator, Dispatch, Reducer } from "Store";
+import { ActionCreator, Dispatch, Reducer, SimpleActionCreator } from "Store";
 
 export interface ResultItem {
   id: string;
@@ -10,10 +10,12 @@ export interface ResultItem {
 }
 
 export interface SearchSlice {
+  query: string;
   results: ResultItem[];
   count: number;
   page: number;
   isSearching: boolean;
+  isSearchingForNextPage: boolean;
 }
 
 export interface SearchContext {
@@ -28,17 +30,29 @@ const SearchContext = createContext<SearchContext>({
 
 // Actions
 enum SearchActions {
+  SET_QUERY,
   APPLY_RESULTS,
   ADD_TO_RESULTS,
   SET_SEARCHING_STATUS,
   INCREMENT_LIKE,
+  INCREMENT_PAGE,
 }
 
+type ResultSetter = Pick<SearchSlice, "results" | "count">;
+
 // Action Creators
-export const applyResults: ActionCreator<
-  Omit<SearchSlice, "isSearching" | "page">
-> = (payload) => ({
+export const applyResults: ActionCreator<ResultSetter> = (payload) => ({
   type: SearchActions.APPLY_RESULTS,
+  payload,
+});
+
+export const addToResults: ActionCreator<ResultSetter> = (payload) => ({
+  type: SearchActions.ADD_TO_RESULTS,
+  payload,
+});
+
+export const setQuery: ActionCreator<{ query: string }> = (payload) => ({
+  type: SearchActions.SET_QUERY,
   payload,
 });
 
@@ -52,6 +66,10 @@ export const setSearchingStatus: ActionCreator<{ status: boolean }> = (
 export const incrementLike: ActionCreator<{ id: string }> = (payload) => ({
   type: SearchActions.INCREMENT_LIKE,
   payload,
+});
+
+export const incrementPage: SimpleActionCreator = () => ({
+  type: SearchActions.INCREMENT_PAGE,
 });
 
 export const searchReducer: Reducer<SearchSlice> = (store, action) => {
@@ -81,12 +99,15 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
         console.assert("results in action payload didn't provided!");
         return store;
       }
-      const results = (action.payload as { results: ResultItem[] }).results;
+      const { results, count } = action.payload as {
+        results: ResultItem[];
+        count: number;
+      };
       const combinedResults = [...store.results, ...results];
       return {
         ...store,
         results: combinedResults,
-        count: combinedResults.length,
+        count,
       };
     }
 
@@ -116,6 +137,20 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
       const wantedImage = cStore.results[wantedImageIndex];
       wantedImage.likes++;
       return cStore;
+    }
+
+    case SearchActions.INCREMENT_PAGE: {
+      const currentPage = store.page;
+      return { ...store, page: currentPage + 1 };
+    }
+
+    case SearchActions.SET_QUERY: {
+      if (!("payload" in action)) {
+        console.assert("payload didn't provided!");
+        return store;
+      }
+
+      return { ...store, query: (action.payload as { query: string }).query };
     }
 
     default:
