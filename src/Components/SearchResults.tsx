@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from "react";
-import { View, StyleSheet, FlatList, Text } from "react-native";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+
 import unsplashSearch from "../Api/unsplashSearch";
 import Loading from "../Common/Loading";
 import SearchContext, {
@@ -39,10 +40,18 @@ const SearchResults: React.FC = () => {
     <View style={styles.searchResults}>
       <FlatList
         data={results}
-        keyExtractor={(item) => (item as { id: string }).id}
+        keyExtractor={(item) => item.id}
         onEndReached={getNextPage}
-        ListFooterComponent={isSearchingForNextPage && <Loading />}
-        // ListFooterComponent={isSearchingForNextPage && <Text>Loading...</Text>}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={
+          isSearchingForNextPage && (
+            <ActivityIndicator
+              style={{ bottom: 8 }}
+              size="large"
+              color="dimgray"
+            />
+          )
+        }
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <ImageCard
