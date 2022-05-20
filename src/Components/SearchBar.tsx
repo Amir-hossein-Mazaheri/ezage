@@ -28,7 +28,7 @@ const SearchBar: React.FC = () => {
   const searchInput = useRef<TextInput>(null);
   const [showClearInput, setShowClearInput] = useState(false);
   const {
-    searchSlice: { count, query },
+    searchSlice: { count, query, isOnInit },
     dispatch,
   } = useContext(SearchContext);
 
@@ -97,7 +97,9 @@ const SearchBar: React.FC = () => {
           </TouchableOpacity>
         )}
       </View>
-      {count > 0 && <Text style={styles.total}>Total Results : {count}</Text>}
+      {count > 0 && !isOnInit && (
+        <Text style={styles.total}>Total Results : {count}</Text>
+      )}
     </View>
   );
 };
