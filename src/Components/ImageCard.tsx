@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useCallback } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
@@ -12,6 +19,9 @@ interface ImageCardProps {
   likes: number;
 }
 
+let lastTap = null;
+const DOUBLE_PRESS_DELAY = 300;
+
 const ImageCard: React.FC<ImageCardProps> = ({
   id,
   title,
@@ -19,28 +29,44 @@ const ImageCard: React.FC<ImageCardProps> = ({
   description,
   likes,
 }) => {
+  const increaseLike = useCallback(() => {
+    console.log("Increased Like!! \n");
+  }, []);
+
+  const triggerDoubleTap = useCallback(() => {
+    const now = Date.now();
+    if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
+      increaseLike();
+      return;
+    }
+
+    lastTap = now;
+  }, [increaseLike]);
+
   return (
-    <View style={styles.imageCard}>
-      <Image style={styles.image} source={{ uri: url }} />
-      <View style={styles.details}>
-        <Text style={styles.imageTitle}>{title}</Text>
-        {description && (
-          <Text style={styles.imageDescription}>{description}</Text>
-        )}
+    <Pressable onPress={triggerDoubleTap}>
+      <View style={styles.imageCard}>
+        <Image style={styles.image} source={{ uri: url }} />
+        <View style={styles.details}>
+          <Text style={styles.imageTitle}>{title}</Text>
+          {description && (
+            <Text style={styles.imageDescription}>{description}</Text>
+          )}
 
-        <View style={styles.bottomBody}>
-          <View style={styles.likes}>
-            <EvilIcons name="heart" size={24} color="black" />
-            <Text style={{ marginLeft: 5 }}>{likes} Likes</Text>
+          <View style={styles.bottomBody}>
+            <View style={styles.likes}>
+              <EvilIcons name="heart" size={24} color="black" />
+              <Text style={{ marginLeft: 5 }}>{likes} Likes</Text>
+            </View>
+
+            <TouchableOpacity style={styles.detailsButton}>
+              <Entypo name="list" size={18} color="white" />
+              <Text style={styles.detailsButtonText}>Go to Details</Text>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={styles.detailsButton}>
-            <Entypo name="list" size={18} color="white" />
-            <Text style={styles.detailsButtonText}>Go to Details</Text>
-          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
