@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { ActionCreator, Dispatch, Reducer } from "Store";
 
-interface ResultItem {
+export interface ResultItem {
   id: string;
   alt_description: string;
   urls: { small: string };
@@ -12,6 +12,7 @@ interface ResultItem {
 export interface SearchSlice {
   results: ResultItem[];
   count: number;
+  page: number;
   isSearching: boolean;
 }
 
@@ -33,9 +34,9 @@ enum SearchActions {
 }
 
 // Action Creators
-export const applyResults: ActionCreator<Omit<SearchSlice, "isSearching">> = (
-  payload
-) => ({
+export const applyResults: ActionCreator<
+  Omit<SearchSlice, "isSearching" | "page">
+> = (payload) => ({
   type: SearchActions.APPLY_RESULTS,
   payload,
 });
@@ -59,7 +60,7 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
         return store;
       }
       const { results, count } = action.payload as {
-        results: unknown[];
+        results: ResultItem[];
         count: number;
       };
       return { ...store, results, count };
@@ -74,7 +75,7 @@ export const searchReducer: Reducer<SearchSlice> = (store, action) => {
         console.assert("results in action payload didn't provided!");
         return store;
       }
-      const results = (action.payload as { results: unknown[] }).results;
+      const results = (action.payload as { results: ResultItem[] }).results;
       const combinedResults = [...store.results, ...results];
       return {
         ...store,
