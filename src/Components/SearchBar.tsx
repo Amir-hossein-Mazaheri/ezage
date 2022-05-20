@@ -6,13 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  View,
-  TextInput,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, TextInput, Text, TouchableOpacity } from "react-native";
 
 import { debounce } from "lodash";
 import { Feather } from "@expo/vector-icons";
@@ -22,18 +16,24 @@ import SearchContext, {
   applyResults,
   setQuery,
   setSearchingStatus,
+  toggleOnInit,
 } from "../Context/SearchContext";
+import styles from "./SearchBarStyle";
 
 const SearchBar: React.FC = () => {
   const searchInput = useRef<TextInput>(null);
   const [showClearInput, setShowClearInput] = useState(false);
   const {
-    searchSlice: { count, query, isOnInit },
+    searchSlice: { count, query },
     dispatch,
   } = useContext(SearchContext);
 
   const setQ = useCallback(
-    (query) => {
+    (query: string) => {
+      if (!query.trim()) {
+        console.log("empty query \n");
+        dispatch(toggleOnInit());
+      }
       dispatch(setQuery({ query }));
     },
     [dispatch]
@@ -97,50 +97,9 @@ const SearchBar: React.FC = () => {
           </TouchableOpacity>
         )}
       </View>
-      {count > 0 && !isOnInit && (
-        <Text style={styles.total}>Total Results : {count}</Text>
-      )}
+      {count > 0 && <Text style={styles.total}>Total Results : {count}</Text>}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  searchBar: {
-    marginHorizontal: 15,
-    marginTop: 12,
-    marginBottom: 5,
-  },
-  safeView: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    paddingVertical: 8,
-    paddingHorizontal: 11,
-    borderRadius: 999,
-    elevation: 15,
-    shadowColor: "#ccc",
-  },
-  searchInput: {
-    paddingHorizontal: 10,
-    fontSize: 16,
-    color: "#808080",
-    flex: 1,
-  },
-  searchIcon: {
-    alignSelf: "center",
-  },
-  total: {
-    textAlign: "center",
-    marginTop: 7,
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "dimgray",
-  },
-  clearInput: {
-    position: "absolute",
-    alignSelf: "center",
-    right: "5%",
-    opacity: 0.8,
-  },
-});
 
 export default SearchBar;
