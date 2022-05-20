@@ -131,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ImageCard;
+export default React.memo(ImageCard);
