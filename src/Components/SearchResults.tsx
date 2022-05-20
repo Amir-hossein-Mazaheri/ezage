@@ -13,8 +13,6 @@ const SearchResults: React.FC = () => {
     return <Loading />;
   }
 
-  console.log(results);
-
   return (
     <View style={styles.searchResults}>
       <FlatList
