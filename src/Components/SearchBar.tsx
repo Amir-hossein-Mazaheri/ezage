@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -19,21 +20,30 @@ import { FontAwesome } from "@expo/vector-icons";
 import unsplashSearch from "../Api/unsplashSearch";
 import SearchContext, {
   applyResults,
+  setQuery,
   setSearchingStatus,
 } from "../Context/SearchContext";
 
 const SearchBar: React.FC = () => {
-  const [query, setQuery] = useState("");
+  const searchInput = useRef<TextInput>(null);
   const [showClearInput, setShowClearInput] = useState(false);
   const {
-    searchSlice: { count },
+    searchSlice: { count, query },
     dispatch,
   } = useContext(SearchContext);
 
+  const setQ = useCallback(
+    (query) => {
+      dispatch(setQuery({ query }));
+    },
+    [dispatch]
+  );
+
   const clearSearch = useCallback(() => {
-    setQuery("");
+    setQ("");
     setShowClearInput(false);
-  }, []);
+    searchInput.current.blur();
+  }, [setQ]);
 
   const doSearch = useCallback(async () => {
     dispatch(setSearchingStatus({ status: true }));
@@ -72,9 +82,10 @@ const SearchBar: React.FC = () => {
         <TextInput
           style={styles.searchInput}
           value={query}
-          onChangeText={setQuery}
+          ref={searchInput}
+          onChangeText={setQ}
           onFocus={() => setShowClearInput(true)}
-          onEndEditing={() => setShowClearInput(false)}
+          onBlur={() => setShowClearInput(false)}
           autoComplete={"off"}
           autoCorrect={false}
           autoCapitalize={"none"}
@@ -127,7 +138,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     right: "5%",
     opacity: 0.8,
-    // transform: ,
   },
 });
 
