@@ -5,10 +5,17 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { View, TextInput, Text, StyleSheet } from "react-native";
+import {
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 
 import { debounce } from "lodash";
 import { Feather } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import unsplashSearch from "../Api/unsplashSearch";
 import SearchContext, {
   applyResults,
@@ -17,10 +24,16 @@ import SearchContext, {
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState("");
+  const [showClearInput, setShowClearInput] = useState(false);
   const {
     searchSlice: { count },
     dispatch,
   } = useContext(SearchContext);
+
+  const clearSearch = useCallback(() => {
+    setQuery("");
+    setShowClearInput(false);
+  }, []);
 
   const doSearch = useCallback(async () => {
     dispatch(setSearchingStatus({ status: true }));
@@ -60,11 +73,18 @@ const SearchBar: React.FC = () => {
           style={styles.searchInput}
           value={query}
           onChangeText={setQuery}
+          onFocus={() => setShowClearInput(true)}
+          onEndEditing={() => setShowClearInput(false)}
           autoComplete={"off"}
           autoCorrect={false}
           autoCapitalize={"none"}
           placeholder={"Search..."}
         />
+        {showClearInput && (
+          <TouchableOpacity style={styles.clearInput} onPress={clearSearch}>
+            <FontAwesome name="times" size={24} color="lightgray" />
+          </TouchableOpacity>
+        )}
       </View>
       {count > 0 && <Text style={styles.total}>Total Results : {count}</Text>}
     </View>
@@ -101,6 +121,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "bold",
     color: "dimgray",
+  },
+  clearInput: {
+    position: "absolute",
+    alignSelf: "center",
+    right: "5%",
+    opacity: 0.8,
+    // transform: ,
   },
 });
 
