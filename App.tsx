@@ -17,11 +17,24 @@ const App: React.FC = () => {
     <StoreProvider>
       <NavigationContainer>
         <RootStack.Navigator initialRouteName="Home">
-          <RootStack.Screen
-            name="Home"
-            options={{ title: "Image Search" }}
-            component={Home}
-          />
+          <RootStack.Group
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: "#0984e3",
+              },
+              headerTitleAlign: "center",
+              headerTitleStyle: {
+                color: "#fff",
+                // fontFamily: "Poppins",
+              },
+            }}
+          >
+            <RootStack.Screen
+              name="Home"
+              options={{ title: "Image Search" }}
+              component={Home}
+            />
+          </RootStack.Group>
         </RootStack.Navigator>
       </NavigationContainer>
       <StatusBar style="auto" />
