@@ -6,11 +6,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, TextInput, Text, TouchableOpacity } from "react-native";
+import { View, TextInput, TouchableOpacity } from "react-native";
 
 import { debounce } from "lodash";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import Text from "../Common/Text";
 import unsplashSearch from "../Api/unsplashSearch";
 import SearchContext, {
   applyResults,
@@ -80,7 +81,10 @@ const SearchBar: React.FC = () => {
           color="black"
         />
         <TextInput
-          style={styles.searchInput}
+          style={[
+            styles.searchInput,
+            { fontFamily: "Poppins_400Regular", textAlignVertical: "bottom" },
+          ]}
           value={query}
           ref={searchInput}
           onChangeText={setQ}
