@@ -1,10 +1,12 @@
 import React, { useCallback, useContext, useRef } from "react";
-import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
+import { View, Image, Pressable } from "react-native";
 
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import Text from "../Common/Text";
 import SearchContext, { incrementLike } from "../Context/SearchContext";
-import styles from "./ImageCartStyle";
+import styles from "./ImageCardStyle";
+import { Link } from "@react-navigation/native";
 
 interface ImageCardProps {
   id: string;
@@ -46,7 +48,9 @@ const ImageCard: React.FC<ImageCardProps> = ({
       <View style={styles.imageCard}>
         <Image style={styles.image} source={{ uri: url }} />
         <View style={styles.details}>
-          <Text style={styles.imageTitle}>{title ? title : "NO TITLE"}</Text>
+          <Text bold style={styles.imageTitle}>
+            {title ? title : "NO TITLE"}
+          </Text>
           {description && (
             <Text style={styles.imageDescription}>{description}</Text>
           )}
@@ -57,10 +61,15 @@ const ImageCard: React.FC<ImageCardProps> = ({
               <Text style={{ marginLeft: 5 }}>{likes} Likes</Text>
             </View>
 
-            <TouchableOpacity style={styles.detailsButton}>
+            <Link
+              to={{ screen: "SingleImage", params: { id, title } }}
+              style={styles.detailsButton}
+            >
               <Entypo name="list" size={18} color="white" />
-              <Text style={styles.detailsButtonText}>Go to Details</Text>
-            </TouchableOpacity>
+              <Text bold style={styles.detailsButtonText}>
+                Go to Details
+              </Text>
+            </Link>
           </View>
         </View>
       </View>
