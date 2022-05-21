@@ -24,11 +24,12 @@ const SearchResults: React.FC = () => {
         params: { query, page: page + 1 },
       });
 
-      dispatch(setNextPageSearchingStatus({ status: false }));
       dispatch(addToResults({ results: data.results, count: data.total }));
     } catch (err) {
       console.log(err, "\n");
       console.log(err.response, "\n");
+    } finally {
+      dispatch(setNextPageSearchingStatus({ status: false }));
     }
   }, [dispatch, page, query]);
 
@@ -42,7 +43,6 @@ const SearchResults: React.FC = () => {
         data={results}
         keyExtractor={(item) => item.id}
         onEndReached={getNextPage}
-        onEndReachedThreshold={0.1}
         ListFooterComponent={
           isSearchingForNextPage && (
             <ActivityIndicator
